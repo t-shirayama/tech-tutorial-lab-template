@@ -8,6 +8,7 @@ const base = process.env.BASE_PATH ?? `/${repoName}/`
 type SidebarItem = {
   text: string
   link?: string
+  collapsed?: boolean
   items?: SidebarItem[]
 }
 
@@ -44,6 +45,7 @@ function buildTutorialSidebar(): SidebarItem[] {
 
       return {
         text: name,
+        collapsed: false,
         items
       }
     })
