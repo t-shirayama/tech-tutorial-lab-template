@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { defineConfig } from 'vitepress'
 
@@ -19,29 +19,119 @@ function buildTutorialSidebar(): SidebarItem[] {
     return []
   }
 
-  return readdirSync(tutorialsDir, { withFileTypes: true })
+  const tutorialNames = readdirSync(tutorialsDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
     .sort()
-    .map((name) => {
-      const dir = join(tutorialsDir, name)
-      const items: SidebarItem[] = []
-      const readmePath = join(dir, 'README.md')
 
-      if (existsSync(readmePath)) {
-        items.push({
-          text: '本文',
-          link: `/tutorials/${name}/`
-        })
-      }
+  const tutorialNameSet = new Set(tutorialNames)
+  const groupedItems = buildTutorialSidebarFromRoadmap(tutorialsDir, tutorialNameSet)
 
-      return {
-        text: name,
-        collapsed: false,
-        items
-      }
+  if (groupedItems.length > 0) {
+    return groupedItems
+  }
+
+  return tutorialNames
+    .map((name) => buildTutorialLink(tutorialsDir, name))
+    .filter((item): item is SidebarItem => item !== null)
+}
+
+function buildTutorialSidebarFromRoadmap(
+  tutorialsDir: string,
+  tutorialNameSet: Set<string>
+): SidebarItem[] {
+  const roadmapPath = join(process.cwd(), 'docs', 'roadmap.md')
+
+  if (!existsSync(roadmapPath)) {
+    return []
+  }
+
+  const roadmap = readFileSync(roadmapPath, 'utf8')
+  const usedTutorials = new Set<string>()
+  const groups: SidebarItem[] = []
+
+  for (const line of roadmap.split('\n')) {
+    const cells = parseMarkdownTableRow(line)
+
+    if (!cells || cells.length < 3 || cells[0] === 'Step' || /^-+$/.test(cells[0])) {
+      continue
+    }
+
+    const tutorialNamesInRow = extractTutorialNames(cells[2])
+      .filter((name) => tutorialNameSet.has(name))
+
+    if (tutorialNamesInRow.length === 0) {
+      continue
+    }
+
+    const items = tutorialNamesInRow
+      .map((name) => buildTutorialLink(tutorialsDir, name))
+      .filter((item): item is SidebarItem => item !== null)
+
+    if (items.length === 0) {
+      continue
+    }
+
+    tutorialNamesInRow.forEach((name) => usedTutorials.add(name))
+    groups.push({
+      text: cells[0],
+      collapsed: false,
+      items
     })
-    .filter((item) => item.items.length > 0)
+  }
+
+  const ungroupedItems = [...tutorialNameSet]
+    .filter((name) => !usedTutorials.has(name))
+    .sort()
+    .map((name) => buildTutorialLink(tutorialsDir, name))
+    .filter((item): item is SidebarItem => item !== null)
+
+  if (ungroupedItems.length > 0) {
+    groups.push({
+      text: '未分類',
+      collapsed: false,
+      items: ungroupedItems
+    })
+  }
+
+  return groups
+}
+
+function parseMarkdownTableRow(line: string): string[] | null {
+  const trimmed = line.trim()
+
+  if (!trimmed.startsWith('|') || !trimmed.endsWith('|')) {
+    return null
+  }
+
+  return trimmed
+    .slice(1, -1)
+    .split('|')
+    .map((cell) => cell.trim())
+}
+
+function extractTutorialNames(cell: string): string[] {
+  return [...cell.matchAll(/`tutorials\/([^`/]+)\/?`/g)].map((match) => match[1])
+}
+
+function buildTutorialLink(tutorialsDir: string, name: string): SidebarItem | null {
+  const readmePath = join(tutorialsDir, name, 'README.md')
+
+  if (!existsSync(readmePath)) {
+    return null
+  }
+
+  return {
+    text: getTutorialTitle(readmePath) ?? name,
+    link: `/tutorials/${name}/`
+  }
+}
+
+function getTutorialTitle(readmePath: string): string | null {
+  const content = readFileSync(readmePath, 'utf8')
+  const heading = content.match(/^#\s+(.+)$/m)
+
+  return heading?.[1]?.trim() ?? null
 }
 
 const docsSidebar: SidebarItem[] = [
