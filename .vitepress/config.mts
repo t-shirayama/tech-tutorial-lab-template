@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { defineConfig } from 'vitepress'
 
@@ -9,19 +9,6 @@ type SidebarItem = {
   text: string
   link?: string
   items?: SidebarItem[]
-}
-
-function readTitle(filePath: string, fallback: string): string {
-  if (!existsSync(filePath)) {
-    return fallback
-  }
-
-  const content = readFileSync(filePath, 'utf8')
-  const heading = content
-    .split(/\r?\n/)
-    .find((line) => line.startsWith('# '))
-
-  return heading?.replace(/^#\s+/, '').trim() || fallback
 }
 
 function buildTutorialSidebar(): SidebarItem[] {
@@ -43,14 +30,14 @@ function buildTutorialSidebar(): SidebarItem[] {
 
       if (existsSync(readmePath)) {
         items.push({
-          text: readTitle(readmePath, name),
+          text: '本文',
           link: `/tutorials/${name}/`
         })
       }
 
       if (existsSync(notesPath)) {
         items.push({
-          text: readTitle(notesPath, '学習メモ'),
+          text: '学習メモ',
           link: `/tutorials/${name}/notes`
         })
       }
@@ -81,6 +68,17 @@ const tutorialsSidebar: SidebarItem[] = [
   }
 ]
 
+const sharedSidebar: SidebarItem[] = [
+  {
+    text: 'はじめに',
+    items: [
+      { text: 'トップ', link: '/' }
+    ]
+  },
+  ...docsSidebar,
+  ...tutorialsSidebar
+]
+
 export default defineConfig({
   lang: 'ja-JP',
   title: 'tech-tutorial-lab-template',
@@ -106,21 +104,7 @@ export default defineConfig({
       { text: 'ロードマップ', link: '/docs/roadmap' },
       { text: 'チュートリアル', link: '/tutorials/00-getting-started/' }
     ],
-    sidebar: {
-      '/docs/': docsSidebar,
-      '/tutorials/': tutorialsSidebar,
-      '/': [
-        {
-          text: 'はじめに',
-          items: [
-            { text: 'トップ', link: '/' },
-            { text: '概要', link: '/docs/overview' },
-            { text: 'ロードマップ', link: '/docs/roadmap' }
-          ]
-        },
-        ...tutorialsSidebar
-      ]
-    },
+    sidebar: sharedSidebar,
     outline: {
       label: 'このページの内容'
     },
