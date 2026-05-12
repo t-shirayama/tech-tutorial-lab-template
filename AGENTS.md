@@ -1,0 +1,80 @@
+# AGENTS.md
+
+このファイルは、Codex などの AI エージェントがこのリポジトリで作業するときの基本ルールです。
+
+このリポジトリは、ライブラリ・フレームワーク別のチュートリアルリポジトリを作成するためのテンプレートです。
+
+## Core Rules
+
+- ドキュメントは日本語で書いてください。
+- 初学者にも分かる表現を優先してください。
+- 既存の構成、命名規則、文体に合わせてください。
+- 技術仕様、API、コマンド、設定値は、可能な限り公式ドキュメントを確認してください。
+- 共通の環境構築はリポジトリ内の一か所にまとめ、各チュートリアルでは追加で必要な準備だけを書いてください。
+- コードを追加した場合は、対応する `README.md` に実行方法を書いてください。
+- 要点や補足は `notes.md` にまとめてください。
+- チュートリアルを追加、削除、並び替えた場合は、`docs/roadmap.md` を更新してください。
+- 新しい用語、概念、略語が出てきた場合は、必要に応じて `docs/glossary.md` を更新してください。
+
+## Repository Map
+
+- `README.md`
+  - リポジトリ全体の概要、対象技術、チュートリアル一覧、使い方を記載します。
+
+- `docs/overview.md`
+  - 対象技術の概要を記載します。
+
+- `docs/roadmap.md`
+  - 学習順序を管理します。
+  - 各ステップと `tutorials/[番号]-[機能名]` を紐づけます。
+
+- `docs/glossary.md`
+  - 初学者がつまずきやすい用語、概念、略語を整理します。
+
+- `tutorials/`
+  - 機能ごとのチュートリアルを置きます。
+  - 各チュートリアルは `tutorials/XX-feature-name/` 形式にします。
+
+- `tutorials/XX-feature-name/README.md`
+  - チュートリアル本体です。
+  - 概要、学ぶこと、前提条件、追加で必要な準備、実行方法、コードの解説を記載します。
+
+- `tutorials/XX-feature-name/notes.md`
+  - 学習メモです。
+  - 要点、補足、詰まりやすい点、復習ポイント、参考リンクを整理します。
+
+- `tutorials/XX-feature-name/code/`
+  - 実行可能なサンプルコードを置きます。
+  - コードを追加した場合は、対応する `README.md` に実行方法を書いてください。
+
+- `examples/`
+  - 複数機能を組み合わせた実践的なサンプルを置きます。
+
+- `templates/tutorial-readme-template.md`
+  - チュートリアル本文の雛形です。
+
+- `templates/tutorial-notes-template.md`
+  - 学習メモの雛形です。
+
+## Codex Optional Settings
+
+通常のチュートリアル構成には含めませんが、必要に応じて Codex 用の設定を追加できます。
+
+- `.agents/skills/`
+  - このリポジトリ固有の Codex skills を置く場所です。
+
+- `.codex/`
+  - Codex の project-scoped 設定や hooks を置く場所です。
+
+`skills` や `hooks` は学習コンテンツ本体ではなく、Codex の作業を補助するための任意設定として扱ってください。
+
+## Before Finishing
+
+作業完了前に、該当する項目だけ確認してください。
+
+- [ ] 必要に応じて `.agents/skills/` または `.codex/` の設定を確認した
+- [ ] ルート `README.md` のチュートリアル一覧を必要に応じて更新した
+- [ ] `docs/roadmap.md` と `tutorials/XX-feature-name/` が紐づいている
+- [ ] 必要に応じて `docs/glossary.md` を更新した
+- [ ] コードを追加した場合、対応する `README.md` に実行方法を書いた
+- [ ] 公式ドキュメントと照らして内容を確認した
