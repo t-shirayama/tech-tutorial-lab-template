@@ -27,19 +27,11 @@ function buildTutorialSidebar(): SidebarItem[] {
       const dir = join(tutorialsDir, name)
       const items: SidebarItem[] = []
       const readmePath = join(dir, 'README.md')
-      const notesPath = join(dir, 'notes.md')
 
       if (existsSync(readmePath)) {
         items.push({
           text: '本文',
           link: `/tutorials/${name}/`
-        })
-      }
-
-      if (existsSync(notesPath)) {
-        items.push({
-          text: '学習メモ',
-          link: `/tutorials/${name}/notes`
         })
       }
 

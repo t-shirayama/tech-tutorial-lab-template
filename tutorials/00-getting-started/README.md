@@ -24,12 +24,10 @@
 ```txt
 tutorials/00-getting-started/
 ├── README.md
-├── notes.md
 └── code/
 ```
 
 - `README.md`: 最初に読む説明を書きます
-- `notes.md`: 要点や補足をまとめます
 - `code/`: 必要であれば最小構成のサンプルを置きます
 
 ## このチュートリアルで追加で必要な準備
@@ -58,3 +56,9 @@ cd tutorials/00-getting-started/code
 
 ここまでで、リポジトリの見方と最初の進め方が分かりました。  
 次は `tutorials/01-core-concepts/` で基本概念を確認します。
+
+## まとめ
+
+- 最初にルート `README.md` を読み、全体の構成と共通セットアップを確認します。
+- 各チュートリアルでは、共通セットアップを繰り返さず、その章だけで必要な準備と実行方法を書きます。
+- 学習順序に迷ったら `docs/roadmap.md` を確認し、用語でつまずいたら `docs/glossary.md` を見直します。
