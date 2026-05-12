@@ -148,6 +148,51 @@ npm run dev
 - 各チュートリアルでは、この共通セットアップを繰り返さず、その章で追加で必要な作業だけを書きます
 - 対象技術の公式ドキュメントを確認し、セットアップ手順に誤りがないようにしてください
 
+## ドキュメントサイトの生成方法
+
+このリポジトリでは、`README.md`、`docs/`、`tutorials/` の Markdown を正本として扱い、VitePress で GitHub Pages 用の HTML を生成できます。
+
+ドキュメントサイトの生成には `Node.js` が必要です。  
+GitHub Actions では `Node.js 22` を使います。ローカルでも `Node.js 18` 以上を使ってください。
+
+初回は依存関係をインストールします。
+
+```bash
+npm install
+```
+
+ローカルで表示を確認する場合は、開発サーバーを起動します。
+
+```bash
+npm run docs:dev
+```
+
+公開用の HTML を生成する場合は、次のコマンドを実行します。
+
+```bash
+npm run docs:build
+```
+
+生成結果は `site/` に出力されます。  
+`site/` は生成物なので、通常は Git にコミットしません。
+
+生成済みのサイトをローカルで確認する場合は、次のコマンドを使います。
+
+```bash
+npm run docs:preview
+```
+
+## GitHub Pages 公開設定
+
+GitHub Pages は GitHub Actions から公開する想定です。  
+リポジトリの `Settings` > `Pages` で、`Build and deployment` の `Source` を `GitHub Actions` に設定してください。
+
+`main` ブランチへ push すると、`.github/workflows/pages.yml` が実行されます。  
+ワークフローでは `npm ci`、`npm run docs:build` を実行し、`site/` を Pages の artifact としてアップロードします。
+
+GitHub Pages では、リポジトリ名に合わせた base path が必要です。  
+このリポジトリでは、ワークフロー内で `BASE_PATH=/リポジトリ名/` の形になるように値を渡して自動調整します。
+
 ## `docs/roadmap.md` とチュートリアルの紐づけ
 
 `docs/roadmap.md` は、学習順序と `tutorials/[番号]-[機能名]` を紐づけるためのファイルです。
